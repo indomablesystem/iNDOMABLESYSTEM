@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDOMABLE - Automatiza tus ventas por WhatsApp con IA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E85A2A;
+            --bg-light: #FFFFFF;
+            --bg-dark: #0A0E27;
+            --text-light: #1A1A1A;
+            --text-dark: #F5F5F5;
+            --accent: #4ECDC4;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .navbar {
+            background: rgba(10, 14, 39, 0.95);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: none;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hero-bg-1 {
+            background: var(--primary);
+            top: -200px;
+            right: -200px;
+        }
+
+        .hero-bg-2 {
+            background: var(--accent);
+            bottom: -200px;
+            left: -200px;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            padding: 1.2rem 2.5rem;
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 6rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 3rem;
+        }
+
+        /* Pain Points */
+        .pain-points {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pain-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .pain-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .pain-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background: var(--bg-light);
+        }
+
+        body.dark-mode .how-it-works {
+            background: var(--bg-dark);
+        }
+
+        .how-content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .how-image-container {
+            position: relative;
+        }
+
+        .how-image {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .how-image:hover {
+            transform: scale(1.02);
+        }
+
+        .steps-container {
+            width: 100%;
+        }
+
+        .step {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            min-width: 60px;
+            height: 60px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Results Section */
+        .results {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        body.dark-mode .results {
+            background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto 4rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            background: var(--bg-light);
+        }
+
+        body.dark-mode .pricing {
+            background: var(--bg-dark);
+        }
+
+        .pricing-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 3px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .pricing-card {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            font-weight: 700;
+            border-bottom-left-radius: 20px;
+            box-shadow: -5px 5px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .price {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 2rem 0 1rem;
+        }
+
+        .price-features {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .price-features li {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        body.dark-mode .price-features li {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .checkmark {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        /* FAQ */
+        .faq {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        body.dark-mode .faq {
+            background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 100%);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .faq-item {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-answer.active {
+            padding: 1.5rem;
+            max-height: 500px;
+        }
+
+        /* Contact Form */
+        .contact {
+            background: var(--bg-light);
+        }
+
+        body.dark-mode .contact {
+            background: var(--bg-dark);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-mode .contact-form {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group select,
+        body.dark-mode .form-group textarea {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .success-message {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        body.dark-mode .footer {
+            background: #000;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .how-content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .how-image-container {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 5rem 1rem 3rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .stats-grid,
+            .pain-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo-container">
+            <img src="./logo.png" alt="Indomable Logo" class="logo-img">
+            <div class="logo-text">INDOMABLE</div>
+        </div>
+        <div class="nav-controls">
+            <button class="btn-icon" onclick="toggleLanguage()" title="Cambiar idioma">
+                <span id="lang-icon">🇪🇸</span>
+            </button>
+            <button class="btn-icon" onclick="toggleDarkMode()" title="Modo oscuro">
+                <span id="theme-icon">🌙</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero fade-in-up" id="home">
+        <div class="hero-bg hero-bg-1"></div>
+        <div class="hero-bg hero-bg-2"></div>
+        <div class="hero-content">
+            <h1>
+                <span id="hero-title">Automatiza tus ventas por WhatsApp con</span>
+                <span class="gradient-text">IA</span>
+            </h1>
+            <p id="hero-subtitle">Leads calientes y decididos. Solo falta tu apretón de manos</p>
+            <div class="cta-buttons">
+                <button class="btn-primary" onclick="scrollToSection('contact')" id="cta-primary">Evaluar mi caso
+                    ahora</button>
+                <button class="btn-secondary" onclick="scrollToSection('how-it-works')" id="cta-secondary">Ver cómo
+                    funciona</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pain Points -->
+    <section class="pain-points">
+        <h2 class="section-title" id="pain-title">¿Cuánto tiempo pierdes hablando con gente que no compra?</h2>
+        <div class="pain-grid">
+            <div class="pain-card">
+                <div class="pain-icon">❄️</div>
+                <p id="pain-1">Leads fríos que nunca compran</p>
+            </div>
+            <div class="pain-card">
+                <div class="pain-icon">💸</div>
+                <p id="pain-2">Comerciales caros que no rinden</p>
+            </div>
+            <div class="pain-card">
+                <div class="pain-icon">📱</div>
+                <p id="pain-3">Mensajes que nadie responde</p>
+            </div>
+            <div class="pain-card">
+                <div class="pain-icon">⏰</div>
+                <p id="pain-4">Horas al día contestando sin resultados</p>
+            </div>
+        </div>
+        <p style="text-align: center; margin-top: 3rem; font-size: 1.3rem; font-weight: 600;" id="pain-conclusion">
+            Sabemos lo que es responder 100 mensajes y cerrar solo 1 venta… Por eso creamos Indomable.
+        </p>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <h2 class="section-title">
+            <span id="how-title">El sistema</span>
+            <span class="gradient-text">Indomable</span>
+        </h2>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 4rem; opacity: 0.8;" id="how-subtitle">
+            Olvídate de gestionar chats. Recibe directamente clientes listos para comprar.
+        </p>
+
+        <div class="how-content-wrapper">
+            <div class="how-image-container fade-in-up">
+                <img src="./illustration.png" alt="Proceso Automatizado" class="how-image">
+            </div>
+
+            <div class="steps-container">
+                <div class="step fade-in-up">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 id="step-1-title">Creamos contenido estratégico</h3>
+                        <p id="step-1-desc">8 publicaciones diseñadas para captar leads calientes en tus redes sociales
+                        </p>
+                    </div>
+                </div>
+                <div class="step fade-in-up">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 id="step-2-title">Lanzamos campañas en Meta</h3>
+                        <p id="step-2-desc">Anuncios segmentados para atraer a tu cliente ideal con precisión</p>
+                    </div>
+                </div>
+                <div class="step fade-in-up">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 id="step-3-title">Almacenamos en tu base de datos</h3>
+                        <p id="step-3-desc">Todos los contactos organizados y listos para el siguiente paso</p>
+                    </div>
+                </div>
+                <div class="step fade-in-up">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3 id="step-4-title">Automatizamos WhatsApp con IA</h3>
+                        <p id="step-4-desc">Conversaciones naturales que califican y calientan al lead sin tu
+                            intervención</p>
+                    </div>
+                </div>
+                <div class="step fade-in-up">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3 id="step-5-title">Te entregamos leads listos</h3>
+                        <p id="step-5-desc">Solo recibes prospectos calientes, listos para cerrar la venta</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results">
+        <h2 class="section-title">
+            <span id="results-title">Resultados reales.</span>
+            <span class="gradient-text">Ventas reales.</span>
+        </h2>
+
+        <div class="stats-grid">
+            <div class="stat-card fade-in-up">
+                <div class="stat-value">+40k€</div>
+                <div class="stat-label" id="stat-1">Generados en 30 días</div>
+            </div>
+            <div class="stat-card fade-in-up" style="animation-delay: 0.2s;">
+                <div class="stat-value">24/7</div>
+                <div class="stat-label" id="stat-2">Atención automática</div>
+            </div>
+            <div class="stat-card fade-in-up" style="animation-delay: 0.4s;">
+                <div class="stat-value">0€</div>
+                <div class="stat-label" id="stat-3">Coste en personal extra</div>
+            </div>
+        </div>
+
+        <div
+            style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+            <div class="glass-card">
+                <p style="font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem;" id="testimonial-1">"Reduje mi
+                    inversión en comerciales a 0€ y vendí más."</p>
+                <p style="opacity: 0.8;">— Hotel La Carreta</p>
+                <p style="color: var(--primary); font-weight: 700; margin-top: 1rem;">+30% Booking</p>
+            </div>
+            <div class="glass-card">
+                <p style="font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem;" id="testimonial-2">"+40.000 €
+                    facturados en 30 días sin tocar el WhatsApp."</p>
+                <p style="opacity: 0.8;">— Carology</p>
+                <p style="color: var(--primary); font-weight: 700; margin-top: 1rem;">+40k € Rev</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <h2 class="section-title" id="pricing-title">Inversión simple. Sin sorpresas.</h2>
+
+        <div class="pricing-card fade-in-up">
+            <div class="pricing-badge" id="pricing-badge">PAGO ÚNICO</div>
+            <h3 style="font-size: 2rem; margin-bottom: 1rem;" id="pricing-plan">Plan Completo</h3>
+            <div class="price">800€</div>
+            <p style="opacity: 0.7; margin-bottom: 2rem;" id="pricing-subtitle">Pago único de configuración</p>
+
+            <ul class="price-features">
+                <li><span class="checkmark">✓</span> <span id="feature-1">8 publicaciones estratégicas</span></li>
+                <li><span class="checkmark">✓</span> <span id="feature-2">Campañas Meta Ads optimizadas</span></li>
+                <li><span class="checkmark">✓</span> <span id="feature-3">Base de datos organizada</span></li>
+                <li><span class="checkmark">✓</span> <span id="feature-4">WhatsApp IA automatizado</span></li>
+                <li><span class="checkmark">✓</span> <span id="feature-5">Soporte completo</span></li>
+            </ul>
+
+            <p style="margin: 2rem 0; opacity: 0.8;" id="pricing-note">+ Presupuesto flexible para publicidad (tú
+                decides cuánto invertir)</p>
+
+            <button class="btn-primary" style="width: 100%;" onclick="scrollToSection('contact')"
+                id="pricing-cta">Comenzar ahora</button>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <h2 class="section-title" id="faq-title">Preguntas frecuentes</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span id="faq-q1">¿Cómo funciona exactamente el servicio?</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p id="faq-a1">Creamos una estrategia completa en tus redes sociales con 8 publicaciones
+                        estratégicas, lanzamos campañas en Meta Ads para atraer leads cualificados, los almacenamos en
+                        tu base de datos y nuestra IA automatiza las conversaciones por WhatsApp para filtrar y calentar
+                        a los prospectos antes de entregártelos listos para cerrar.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span id="faq-q2">¿Qué diferencia hay con Facebook Ads normales?</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p id="faq-a2">La gran diferencia es que aquí no solo generamos leads, sino que automatizamos el
+                        primer contacto y la calificación. Nuestra IA conversa con cada lead, filtra a los curiosos de
+                        los compradores reales, y solo te entrega prospectos calientes listos para cerrar la venta.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span id="faq-q3">¿Qué garantías tengo?</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p id="faq-a3">Si en 3 meses no consigues ventas, el 4º mes es GRATIS. Trabajamos por objetivos y
+                        nos comprometemos con tus resultados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="contact" id="contact">
+        <h2 class="section-title" id="contact-title">¿Quieres automatizar tus ventas?</h2>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; opacity: 0.8;" id="contact-subtitle">
+            Cuéntanos sobre tu negocio
+        </p>
+
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+            <div class="success-message" id="success-message">
+                <span id="success-text">¡Formulario enviado correctamente! Nos pondremos en contacto contigo lo antes
+                    posible.</span>
+            </div>
+            <div class="form-group">
+                <label for="name" id="label-name">Nombre completo</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email" id="label-email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone" id="label-phone">Teléfono</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="business" id="label-business">Negocio</label>
+                <input type="text" id="business" required>
+            </div>
+            <div class="form-group">
+                <label for="service" id="label-service">Servicio</label>
+                <input type="text" id="service" required>
+            </div>
+            <div class="form-group">
+                <label for="ticket" id="label-ticket">Ticket medio</label>
+                <select id="ticket" required>
+                    <option value="">Selecciona...</option>
+                    <option value="<500">Menos de 500€</option>
+                    <option value="500-1000">500€ - 1.000€</option>
+                    <option value="1000-5000">1.000€ - 5.000€</option>
+                    <option value=">5000">Más de 5.000€</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;" id="submit-btn">Evaluar mi caso</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 INDOMABLE. <span id="footer-rights">Todos los derechos reservados.</span></p>
+    </footer>
+
+    <script>
+        // Current language
+        let currentLang = 'es';
+
+        // Smooth scroll
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('theme-icon');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('span:last-child');
+
+            answer.classList.toggle('active');
+            icon.textContent = answer.classList.contains('active') ? '−' : '+';
+        }
+
+        // Translations
+        const translations = {
+            es: {
+                'hero-title': 'Automatiza tus ventas por WhatsApp con',
+                'hero-subtitle': 'Leads calientes y decididos. Solo falta tu apretón de manos',
+                'cta-primary': 'Evaluar mi caso ahora',
+                'cta-secondary': 'Ver cómo funciona',
+                'pain-title': '¿Cuánto tiempo pierdes hablando con gente que no compra?',
+                'pain-1': 'Leads fríos que nunca compran',
+                'pain-2': 'Comerciales caros que no rinden',
+                'pain-3': 'Mensajes que nadie responde',
+                'pain-4': 'Horas al día contestando sin resultados',
+                'pain-conclusion': 'Sabemos lo que es responder 100 mensajes y cerrar solo 1 venta… Por eso creamos Indomable.',
+                'how-title': 'El sistema',
+                'how-subtitle': 'Olvídate de gestionar chats. Recibe directamente clientes listos para comprar.',
+                'step-1-title': 'Creamos contenido estratégico',
+                'step-1-desc': '8 publicaciones diseñadas para captar leads calientes en tus redes sociales',
+                'step-2-title': 'Lanzamos campañas en Meta',
+                'step-2-desc': 'Anuncios segmentados para atraer a tu cliente ideal con precisión',
+                'step-3-title': 'Almacenamos en tu base de datos',
+                'step-3-desc': 'Todos los contactos organizados y listos para el siguiente paso',
+                'step-4-title': 'Automatizamos WhatsApp con IA',
+                'step-4-desc': 'Conversaciones naturales que califican y calientan al lead sin tu intervención',
+                'step-5-title': 'Te entregamos leads listos',
+                'step-5-desc': 'Solo recibes prospectos calientes, listos para cerrar la venta',
+                'results-title': 'Resultados reales.',
+                'stat-1': 'Generados en 30 días',
+                'stat-2': 'Atención automática',
+                'stat-3': 'Coste en personal extra',
+                'testimonial-1': '"Reduje mi inversión en comerciales a 0€ y vendí más."',
+                'testimonial-2': '"+40.000 € facturados en 30 días sin tocar el WhatsApp."',
+                'pricing-title': 'Inversión simple. Sin sorpresas.',
+                'pricing-badge': 'PAGO ÚNICO',
+                'pricing-plan': 'Plan Completo',
+                'pricing-subtitle': 'Pago único de configuración',
+                'feature-1': '8 publicaciones estratégicas',
+                'feature-2': 'Campañas Meta Ads optimizadas',
+                'feature-3': 'Base de datos organizada',
+                'feature-4': 'WhatsApp IA automatizado',
+                'feature-5': 'Soporte completo',
+                'pricing-note': '+ Presupuesto flexible para publicidad (tú decides cuánto invertir)',
+                'pricing-cta': 'Comenzar ahora',
+                'faq-title': 'Preguntas frecuentes',
+                'faq-q1': '¿Cómo funciona exactamente el servicio?',
+                'faq-a1': 'Creamos una estrategia completa en tus redes sociales con 8 publicaciones estratégicas, lanzamos campañas en Meta Ads para atraer leads cualificados, los almacenamos en tu base de datos y nuestra IA automatiza las conversaciones por WhatsApp para filtrar y calentar a los prospectos antes de entregártelos listos para cerrar.',
+                'faq-q2': '¿Qué diferencia hay con Facebook Ads normales?',
+                'faq-a2': 'La gran diferencia es que aquí no solo generamos leads, sino que automatizamos el primer contacto y la calificación. Nuestra IA conversa con cada lead, filtra a los curiosos de los compradores reales, y solo te entrega prospectos calientes listos para cerrar la venta.',
+                'faq-q3': '¿Qué garantías tengo?',
+                'faq-a3': 'Si en 3 meses no consigues ventas, el 4º mes es GRATIS. Trabajamos por objetivos y nos comprometemos con tus resultados.',
+                'contact-title': '¿Quieres automatizar tus ventas?',
+                'contact-subtitle': 'Cuéntanos sobre tu negocio',
+                'label-name': 'Nombre completo',
+                'label-email': 'Email',
+                'label-phone': 'Teléfono',
+                'label-business': 'Negocio',
+                'label-service': 'Servicio',
+                'label-ticket': 'Ticket medio',
+                'submit-btn': 'Evaluar mi caso',
+                'success-text': '¡Formulario enviado correctamente! Nos pondremos en contacto contigo lo antes posible.',
+                'footer-rights': 'Todos los derechos reservados.'
+            },
+            en: {
+                'hero-title': 'Automate your WhatsApp sales with',
+                'hero-subtitle': 'Hot and decided leads. Only your handshake is missing',
+                'cta-primary': 'Evaluate my case now',
+                'cta-secondary': 'See how it works',
+                'pain-title': 'How much time do you waste talking to people who don\'t buy?',
+                'pain-1': 'Cold leads that never buy',
+                'pain-2': 'Expensive sales reps that don\'t perform',
+                'pain-3': 'Messages that no one answers',
+                'pain-4': 'Hours a day answering without results',
+                'pain-conclusion': 'We know what it\'s like to answer 100 messages and close only 1 sale... That\'s why we created Indomable.',
+                'how-title': 'The',
+                'how-subtitle': 'Forget about managing chats. Receive clients ready to buy directly.',
+                'step-1-title': 'We create strategic content',
+                'step-1-desc': '8 posts designed to capture hot leads on your social networks',
+                'step-2-title': 'We launch campaigns on Meta',
+                'step-2-desc': 'Segmented ads to attract your ideal client with precision',
+                'step-3-title': 'We store in your database',
+                'step-3-desc': 'All contacts organized and ready for the next step',
+                'step-4-title': 'We automate WhatsApp with AI',
+                'step-4-desc': 'Natural conversations that qualify and warm up the lead without your intervention',
+                'step-5-title': 'We deliver ready leads',
+                'step-5-desc': 'You only receive hot prospects, ready to close the sale',
+                'results-title': 'Real results.',
+                'stat-1': 'Generated in 30 days',
+                'stat-2': 'Automated support',
+                'stat-3': 'Cost in extra staff',
+                'testimonial-1': '"I reduced my investment in sales reps to 0€ and sold more."',
+                'testimonial-2': '"+40,000 € billed in 30 days without touching WhatsApp."',
+                'pricing-title': 'Simple investment. No surprises.',
+                'pricing-badge': 'ONE-TIME PAYMENT',
+                'pricing-plan': 'Complete Plan',
+                'pricing-subtitle': 'One-time setup payment',
+                'feature-1': '8 strategic posts',
+                'feature-2': 'Optimized Meta Ads campaigns',
+                'feature-3': 'Organized database',
+                'feature-4': 'Automated WhatsApp AI',
+                'feature-5': 'Complete support',
+                'pricing-note': '+ Flexible advertising budget (you decide how much to invest)',
+                'pricing-cta': 'Start now',
+                'faq-title': 'Frequently Asked Questions',
+                'faq-q1': 'How exactly does the service work?',
+                'faq-a1': 'We create a complete strategy on your social networks with 8 strategic posts, launch Meta Ads campaigns to attract qualified leads, store them in your database and our AI automates WhatsApp conversations to filter and warm up prospects before delivering them ready to close.',
+                'faq-q2': 'What is the difference with normal Facebook Ads?',
+                'faq-a2': 'The big difference is that here we not only generate leads, but we automate the first contact and qualification. Our AI chats with each lead, filters curiosity from real buyers, and only delivers hot prospects ready to close the sale.',
+                'faq-q3': 'What guarantees do I have?',
+                'faq-a3': 'If in 3 months you don\'t get sales, the 4th month is FREE. We work by objectives and commit to your results.',
+                'contact-title': 'Do you want to automate your sales?',
+                'contact-subtitle': 'Tell us about your business',
+                'label-name': 'Full Name',
+                'label-email': 'Email',
+                'label-phone': 'Phone',
+                'label-business': 'Business',
+                'label-service': 'Service',
+                'label-ticket': 'Average Ticket',
+                'submit-btn': 'Evaluate my case',
+                'success-text': 'Form submitted successfully! We will contact you as soon as possible.',
+                'footer-rights': 'All rights reserved.'
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'es' ? 'en' : 'es';
+            const icon = document.getElementById('lang-icon');
+            icon.textContent = currentLang === 'es' ? '🇪🇸' : '🇬🇧';
+
+            // Update all text elements
+            Object.keys(translations[currentLang]).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = translations[currentLang][key];
+                }
+            });
+        }
+
+        // Form submission
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submit-btn');
+            const successMessage = document.getElementById('success-message');
+
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = currentLang === 'es' ? 'Enviando...' : 'Sending...';
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                business: document.getElementById('business').value,
+                service: document.getElementById('service').value,
+                ticket: document.getElementById('ticket').value
+            };
+
+            try {
+                const response = await fetch('https://hook.eu2.make.com/xx4a8n1hm7a84w69w2selmt96ng26m6x', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    successMessage.classList.add('show');
+
+                    // Reset form
+                    event.target.reset();
+
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.remove('show');
+                    }, 5000);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(currentLang === 'es' ? 'Hubo un error al enviar el formulario. Por favor, inténtalo de nuevo.' : 'There was an error submitting the form. Please try again.');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = translations[currentLang]['submit-btn'];
+            }
+        }
+    </script>
+</body>
+
+</html>
